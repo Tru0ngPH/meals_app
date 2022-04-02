@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import './widgets/category_item.dart';
-import './dummy_category.dart';
+import '../widgets/category_item.dart';
+import '../dummy_data.dart';
 
 class CategoryScreen extends StatelessWidget {
   const CategoryScreen({Key? key}) : super(key: key);
@@ -8,9 +8,6 @@ class CategoryScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('DeliMeals'),
-      ),
       body: GridView(
         padding: const EdgeInsets.all(25),
         gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(

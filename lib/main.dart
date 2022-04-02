@@ -1,20 +1,62 @@
 import 'package:flutter/material.dart';
-import 'package:meals_app/category_meal_screen.dart';
-import './categories_screen.dart';
+
+import './models/meal.dart';
+import './dummy_data.dart';
+import './screens/filters_screen.dart';
+import './screens/tabs_screen.dart';
+import './screens/meal_detial_screen.dart';
+import './screens/category_meal_screen.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
-  // This widget is the root of your application.
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  Map<String, bool> _filters = {
+    'gluten': false,
+    'lactose': false,
+    'vegan': false,
+    'vegetarian': false,
+  };
+
+  List<Meal> _availableMeals = dummyMeal;
+
+  void _setFilters(Map<String, bool> filterData) {
+    setState(() {
+      _filters = filterData;
+
+      _availableMeals = dummyMeal.where((meal) {
+        if (_filters['gluten'] as bool && !meal.isGlutenFree) {
+          return false;
+        }
+        if (_filters['lactose'] as bool && !meal.isLactoseFree) {
+          return false;
+        }
+        if (_filters['vegetarian'] as bool && !meal.isVegetarian) {
+          return false;
+        }
+        if (_filters['vegan'] as bool && !meal.isVegan) {
+          return false;
+        }
+        return true;
+      }).toList();
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        toggleableActiveColor: Colors.amber,
+        primaryColor: Colors.pink,
         canvasColor: const Color.fromRGBO(255, 254, 229, 1),
         fontFamily: 'Raleway',
         textTheme: ThemeData.light().textTheme.copyWith(
@@ -31,14 +73,36 @@ class MyApp extends StatelessWidget {
                 fontFamily: 'RobotoCondensed',
               ),
             ),
-        colorScheme: ColorScheme.fromSwatch(primarySwatch: Colors.pink)
-            .copyWith(secondary: Colors.amber),
+        colorScheme:
+            ColorScheme.fromSwatch(primarySwatch: Colors.pink).copyWith(
+          secondary: Colors.amber,
+        ),
       ),
       // home: const CategoryScreen(),
       initialRoute: '/',
       routes: {
-        '/': (_) => const CategoryScreen(),
-        CategoryMealScreen.routerName: (_) => const CategoryMealScreen(),
+        '/': (_) => const TabsScreen(),
+        CategoryMealScreen.routerName: (_) =>
+            CategoryMealScreen(_availableMeals),
+        MealDetialScreen.routeName: (_) => const MealDetialScreen(),
+        FiltersScreen.routeName: (_) => FiltersScreen(_filters, _setFilters),
+      },
+
+      // onGenerateRoute: (settings) {
+      //   if (settings.name == CategoryMealScreen.routerName) {
+      //     return ...;
+      //   } else if (settings.name == MealDetialScreen.routeName) {
+      //     return ...;
+      //   } else {
+      //     return ...;
+      //   }
+      // },
+
+      //Khi phat sinh lỗi thì sẽ điều hướng đến một màm hình nào đó. giống như
+      // 404 eror trên web
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(
+            builder: (_) => CategoryMealScreen(_availableMeals));
       },
     );
   }
