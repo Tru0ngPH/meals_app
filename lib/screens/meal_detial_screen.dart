@@ -3,7 +3,11 @@ import '../dummy_data.dart';
 import '../models/meal.dart';
 
 class MealDetialScreen extends StatelessWidget {
-  const MealDetialScreen({Key? key}) : super(key: key);
+  const MealDetialScreen(this.toggleFavorite, this.isFavorite, {Key? key})
+      : super(key: key);
+
+  final Function toggleFavorite;
+  final Function isFavorite;
 
   static String routeName = '/meal-detial-screen';
 
@@ -103,30 +107,33 @@ class MealDetialScreen extends StatelessWidget {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).pop(mealId);
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              // action: SnackBarAction(
-              //   label: 'Action',
-              //   onPressed: () {
-              //     // Code to execute.
-              //   },
-              // ),
-              content: Text('You deleted  ${selectMeal.title}'),
-              duration: const Duration(milliseconds: 1500),
-              width: 280.0, // Width of the SnackBar.
-              padding: const EdgeInsets.symmetric(
-                horizontal: 8.0, // Inner padding for SnackBar content.
-              ),
-              behavior: SnackBarBehavior.floating,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10.0),
-              ),
-            ),
-          );
-        },
-        child: const Icon(Icons.delete, color: Colors.black),
+        onPressed: () => toggleFavorite(mealId),
+        // () {
+        //   // Navigator.of(context).pop(mealId);
+        //   ScaffoldMessenger.of(context).showSnackBar(
+        //     SnackBar(
+        //       // action: SnackBarAction(
+        //       //   label: 'Action',
+        //       //   onPressed: () {
+        //       //     // Code to execute.
+        //       //   },
+        //       // ),
+        //       content: Text('you added ${selectMeal.title} in your favorite'),
+        //       duration: const Duration(milliseconds: 1500),
+        //       width: 280.0, // Width of the SnackBar.
+        //       padding: const EdgeInsets.symmetric(
+        //         horizontal: 8.0, // Inner padding for SnackBar content.
+        //       ),
+        //       behavior: SnackBarBehavior.floating,
+        //       shape: RoundedRectangleBorder(
+        //         borderRadius: BorderRadius.circular(10.0),
+        //       ),
+        //     ),
+        //   );
+        // },
+        child: Icon(isFavorite(mealId)
+            ? Icons.favorite
+            : Icons.favorite_border_outlined),
       ),
     );
   }
